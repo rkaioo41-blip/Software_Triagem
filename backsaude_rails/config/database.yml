@@ -1,0 +1,28 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  username: postgres
+  password: 2509  # Definindo a senha correta
+
+development:
+  <<: *default
+  database: backsaude_rails_development
+  username: postgres
+  password: 2509  # Senha para o banco de dados de desenvolvimento
+  host: localhost  # Usar localhost no Windows
+
+test:
+  <<: *default
+  database: backsaude_rails_test
+  username: postgres
+  password: 2509  # Senha para o banco de dados de teste
+  host: localhost
+
+production:
+  <<: *default
+  database: backsaude_rails_production
+  username: postgres
+  password: <%= ENV["BACKSAUDE_RAILS_DATABASE_PASSWORD"] %>
+  host: localhost

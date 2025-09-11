@@ -1,0 +1,191 @@
+/* global.css - Versão simplificada para TriaTech */
+
+/* ===== VARIÁVEIS CSS ===== */
+:root {
+  /* Cores principais */
+  --cor-primaria: #2a5298;
+  --cor-secundaria: #1e3c72;
+  --cor-texto: #333333;
+  --cor-texto-claro: #666666;
+  --cor-fundo: #f5f5f7;
+  --cor-fundo-secundaria: #ffffff;
+  --cor-borda: #dddddd;
+  --cor-sucesso: #28a745;
+  --cor-alerta: #ffc107;
+  --cor-erro: #dc3545;
+  --cor-info: #17a2b8;
+
+  /* Espaçamentos */
+  --espacamento-pequeno: 0.5rem;
+  --espacamento-medio: 1rem;
+  --espacamento-grande: 1.5rem;
+
+  /* Bordas */
+  --raio-borda-pequeno: 4px;
+  --raio-borda-medio: 8px;
+  --raio-borda-grande: 12px;
+
+  /* Sombras */
+  --sombra-leve: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --sombra-media: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== ESTILOS GERAIS ===== */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 16px;
+  color: var(--cor-texto);
+  background-color: var(--cor-fundo);
+  line-height: 1.6;
+}
+
+/* ===== TIPOGRAFIA ===== */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0 0 var(--espacamento-medio) 0;
+  font-weight: 600;
+  color: var(--cor-primaria);
+}
+
+p {
+  margin-bottom: var(--espacamento-medio);
+}
+
+a {
+  color: var(--cor-primaria);
+  text-decoration: underline;
+}
+
+a:hover {
+  color: var(--cor-secundaria);
+  text-decoration: none;
+}
+
+/* ===== FORMULÁRIOS ===== */
+label {
+  display: block;
+  margin-bottom: var(--espacamento-pequeno);
+  font-weight: 500;
+}
+
+input, select, textarea, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: var(--espacamento-pequeno) var(--espacamento-medio);
+  border: 2px solid var(--cor-borda);
+  border-radius: var(--raio-borda-pequeno);
+  background-color: var(--cor-fundo-secundaria);
+  color: var(--cor-texto);
+  margin-bottom: var(--espacamento-medio);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.2);
+}
+
+/* ===== BOTÕES ===== */
+button {
+  display: inline-block;
+  padding: var(--espacamento-pequeno) var(--espacamento-medio);
+  background-color: var(--cor-primaria);
+  color: white;
+  border: none;
+  border-radius: var(--raio-borda-pequeno);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background-color: var(--cor-secundaria);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* ===== MENSAGENS ===== */
+.mensagem-erro {
+  color: var(--cor-erro);
+  font-size: 14px;
+  margin-bottom: var(--espacamento-medio);
+}
+
+.mensagem-sucesso {
+  color: var(--cor-sucesso);
+  font-size: 16px;
+  padding: var(--espacamento-medio);
+  background-color: rgba(40, 167, 69, 0.1);
+  border-left: 4px solid var(--cor-sucesso);
+  margin-bottom: var(--espacamento-medio);
+}
+
+/* ===== TABELAS ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--espacamento-medio);
+}
+
+th, td {
+  padding: var(--espacamento-pequeno);
+  text-align: left;
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+th {
+  background-color: rgba(42, 82, 152, 0.1);
+  font-weight: 600;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cor-fundo);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--cor-borda);
+  border-radius: 6px;
+  border: 3px solid var(--cor-fundo);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cor-texto-claro);
+}
+
+/* ===== RESPONSIVIDADE ===== */
+@media (max-width: 768px) {
+  :root {
+    --espacamento-grande: 1.25rem;
+  }
+}

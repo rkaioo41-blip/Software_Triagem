@@ -1,0 +1,9 @@
+<h2>Olá, <%= @enfermeiro.nome %>!</h2>
+<p>Você solicitou a redefinição de senha.</p>
+<p>Clique no link abaixo para criar uma nova senha:</p>
+<p>
+  <a href="http://localhost:8081/recuperar-senha?token=<%= @token %>">
+    Redefinir Senha
+  </a>
+</p>
+<p>Se você não solicitou, ignore este e-mail.</p>

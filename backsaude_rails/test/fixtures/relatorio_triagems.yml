@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  paciente_fake: one
+  enfermeiro: one
+  classificacao_risco: one
+  protocolo: MyString
+  data_triagem: 2025-08-19 00:06:04
+
+two:
+  paciente_fake: two
+  enfermeiro: two
+  classificacao_risco: two
+  protocolo: MyString
+  data_triagem: 2025-08-19 00:06:04
