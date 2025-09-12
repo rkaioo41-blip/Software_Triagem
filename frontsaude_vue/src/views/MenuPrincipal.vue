@@ -87,37 +87,37 @@
 </template>
 
 <script>
-export default {
-  name: 'MenuPrincipal',
-  data() {
-    return {
-      usuario: {
-        nome: '',
-        coren: ''
-      }
-    };
-  },
-  created() {
-    this.carregarUsuario();
-  },
-  methods: {
-    carregarUsuario() {
-      const usuarioSalvo = localStorage.getItem('usuario');
-      if (usuarioSalvo) {
-        this.usuario = JSON.parse(usuarioSalvo);
-      }
+  export default {
+    name: 'MenuPrincipal',
+    data() {
+      return {
+        usuario: {
+          nome: '',
+          coren: ''
+        }
+      };
     },
-    abrirPerfil() {
-      this.$router.push('/menu/perfil');
+    created() {
+      this.carregarUsuario();
     },
-    fazerLogout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('usuario');
-      this.$router.push('/login');
-      console.log('Logout realizado com sucesso!');
+    methods: {
+      carregarUsuario() {
+        const usuarioSalvo = localStorage.getItem('usuario');
+        if (usuarioSalvo) {
+          this.usuario = JSON.parse(usuarioSalvo);
+        }
+      },
+      abrirPerfil() {
+        this.$router.push('/menu/perfil');
+      },
+      fazerLogout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuario');
+        this.$router.push('/login');
+        console.log('Logout realizado com sucesso!');
+      }
     }
-  }
-};
+  };
 </script>
 
 <style scoped>

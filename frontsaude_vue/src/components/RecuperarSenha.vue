@@ -38,7 +38,7 @@
 
 <script>
 import api from "@/axios";
-import CryptoJS from "crypto-js";
+import { ofuscarSenha } from "@/utilitarios/ofuscacaoSenha"; // 👈 mesmo utilitário do cadastro
 
 export default {
   data() {
@@ -57,10 +57,6 @@ export default {
     this.token = urlParams.get("token") || "";
   },
   methods: {
-    inverterString(str) {
-      return str.split("").reverse().join("");
-    },
-
     async enviarSolicitacao() {
       this.carregando = true;
       this.mensagem = "";
@@ -84,16 +80,14 @@ export default {
         return;
       }
 
-
       this.carregando = true;
       try {
-        // 🔐 Mesma lógica do cadastro: inverter + SHA-256
-        const senhaInvertida = this.inverterString(this.novaSenha);
-        const senhaHash = CryptoJS.SHA256(senhaInvertida).toString();
+        // 🔐 mesma lógica do cadastro
+        const { senhaOfuscada } = ofuscarSenha(this.novaSenha);
 
         const response = await api.put("/recuperar_senhas", {
           token: this.token,
-          password: senhaHash
+          password: senhaOfuscada
         });
 
         this.sucesso = true;
@@ -111,6 +105,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 /* Mantém o mesmo estilo do cadastro, apenas adaptando classes */
