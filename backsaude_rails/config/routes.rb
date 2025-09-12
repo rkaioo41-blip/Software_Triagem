@@ -13,7 +13,6 @@ Rails.application.routes.draw do
 
     resources :pacientes_fake, param: :codigo_sus, only: [ :show ]
     resources :classificacoes_risco, only: [ :index ]
-    resources :pacientes_triagem, only: [ :index, :create, :update, :destroy ]
     resources :recuperar_senhas, only: [ :create ] do
       collection do
         put :update # cria /api/recuperar_senhas/update
