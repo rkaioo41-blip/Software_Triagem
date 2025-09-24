@@ -24,5 +24,22 @@ module Api
         render json: { erro: "Credenciais inválidas. Verifique seu identificador e senha." }, status: :unauthorized
       end
     end
+
+    def validar_senha
+      # Lógica para validar a senha
+      identificador = params[:identificador].to_s.downcase.strip
+      senha = params[:password]
+
+      enfermeiro =
+        Enfermeiro.find_by("LOWER(email) = ?", identificador) ||
+        Enfermeiro.find_by(cpf: identificador) ||
+        Enfermeiro.find_by("UPPER(REPLACE(coren, ' ', '')) = ?", identificador)
+
+      if enfermeiro&.authenticate(senha)
+        render json: { valido: true }, status: :ok
+      else
+        render json: { erro: "Senha incorreta" }, status: :unauthorized
+      end
+    end
   end
 end

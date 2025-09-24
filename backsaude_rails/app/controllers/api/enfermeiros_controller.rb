@@ -2,7 +2,6 @@ module Api
   class EnfermeirosController < ApplicationController
     skip_before_action :authenticate_request!, only: [ :create, :validar_coren, :validar_cpf, :validar_email ]
 
-    # POST /api/enfermeiros
     def create
       enfermeiro = Enfermeiro.new(enfermeiro_params)
 
@@ -13,7 +12,6 @@ module Api
       end
     end
 
-    # POST /api/enfermeiros/validar_cpf
     def validar_cpf
       cpf = params[:cpf].to_s.gsub(/\D/, "")
       ja_existe = Enfermeiro.exists?(cpf: cpf)
@@ -24,7 +22,6 @@ module Api
       }
     end
 
-    # POST /api/enfermeiros/validar_email
     def validar_email
       email = params[:email].to_s.strip.downcase
       ja_existe = Enfermeiro.exists?(email: email)
@@ -35,7 +32,7 @@ module Api
       }
     end
 
-    # POST /api/enfermeiros/validar_coren
+
     def validar_coren
       coren = params[:coren].to_s.strip
       uf    = params[:uf].to_s.strip.upcase
@@ -47,6 +44,18 @@ module Api
         mensagem: ja_existe ? "❌ COREN já cadastrado!" : "✅ COREN disponível!"
       }
     end
+
+
+    def update
+      enfermeiro = Enfermeiro.find(params[:id])
+
+      if enfermeiro.update(enfermeiro_params)
+        render json: { mensagem: "✅ Dados atualizados com sucesso" }, status: :ok
+      else
+        render json: { erro: enfermeiro.errors.full_messages.join(", ") }, status: :unprocessable_entity
+      end
+    end
+
 
     private
 

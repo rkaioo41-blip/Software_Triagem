@@ -351,8 +351,6 @@ export default {
 };
 </script>
 
-
-
 <style scoped>
 /* Variáveis de cores (mantidas iguais ao login) */
 :root {

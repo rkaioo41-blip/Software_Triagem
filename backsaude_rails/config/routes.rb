@@ -1,7 +1,7 @@
 # config/routes.rb
 Rails.application.routes.draw do
   namespace :api do
-    resources :enfermeiros, only: [ :create ] do
+    resources :enfermeiros, only: [ :create, :update ] do
       collection do
         post :validar_cpf
         post :validar_email
@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     end
     post "validar_coren", to: "coren_validator#validar"
     post "login", to: "sessoes#create"
+    post "validar_senha", to: "sessoes#validar_senha"
+
 
     resources :pacientes_fake, param: :codigo_sus, only: [ :show ]
     resources :classificacoes_risco, only: [ :index ]

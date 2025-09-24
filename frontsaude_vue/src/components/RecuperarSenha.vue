@@ -21,9 +21,20 @@
       <!-- FORMULÁRIO DE NOVA SENHA -->
       <div v-else>
         <form @submit.prevent="redefinirSenha" class="formulario-recuperar">
-          <input type="password" v-model="novaSenha" placeholder="Nova senha" required />
-          <input type="password" v-model="confirmaSenha" placeholder="Confirme a senha" required />
-          <button type="submit" :disabled="carregando">{{ carregando ? "Processando..." : "Atualizar senha" }}</button>
+          <div class="grupo-duplo">
+            <div class="grupo-formulario">
+              <label class="rotulo-formulario">Nova Senha</label>
+              <input type="password" v-model="novaSenha" class="entrada-formulario" placeholder="••••••••" required />
+            </div>
+            <div class="grupo-formulario">
+              <label class="rotulo-formulario">Confirmar Senha</label>
+              <input type="password" v-model="confirmaSenha" class="entrada-formulario" placeholder="••••••••" required />
+            </div>
+          </div>
+          <button type="submit" :disabled="carregando" class="botao-principal">
+            <span v-if="!carregando">Atualizar senha</span>
+            <span v-else class="carregando-spinner"><i class="fas fa-spinner fa-spin"></i> Processando...</span>
+          </button>
         </form>
       </div>
 
@@ -38,7 +49,7 @@
 
 <script>
 import api from "@/axios";
-import CryptoJS from "crypto-js";
+import { ofuscarSenha } from "@/utilitarios/ofuscacaoSenha";
 
 export default {
   data() {
@@ -53,14 +64,17 @@ export default {
     };
   },
   mounted() {
+    // Corrigir a extração do token da URL
     const urlParams = new URLSearchParams(window.location.search);
-    this.token = urlParams.get("token") || "";
+    const tokenFromUrl = urlParams.get("token");
+    
+    if (tokenFromUrl) {
+      // Decodificar o token se necessário (pode estar encoded na URL)
+      this.token = decodeURIComponent(tokenFromUrl);
+      console.log("Token extraído:", this.token);
+    }
   },
   methods: {
-    inverterString(str) {
-      return str.split("").reverse().join("");
-    },
-
     async enviarSolicitacao() {
       this.carregando = true;
       this.mensagem = "";
@@ -84,26 +98,46 @@ export default {
         return;
       }
 
+      if (!this.token) {
+        this.sucesso = false;
+        this.mensagem = "Token inválido ou expirado.";
+        return;
+      }
 
       this.carregando = true;
       try {
-        // 🔐 Mesma lógica do cadastro: inverter + SHA-256
-        const senhaInvertida = this.inverterString(this.novaSenha);
-        const senhaHash = CryptoJS.SHA256(senhaInvertida).toString();
+        // 🔐 Usar a mesma lógica do cadastro através do utilitário
+        const { senhaOfuscada } = ofuscarSenha(this.novaSenha);
 
+        console.log("Enviando token:", this.token);
+        
         const response = await api.put("/recuperar_senhas", {
           token: this.token,
-          password: senhaHash
+          enfermeiro: {
+            password: senhaOfuscada
+          }
         });
 
         this.sucesso = true;
-        this.mensagem = response.data.mensagem;
+        this.mensagem = response.data.mensagem || "Senha redefinida com sucesso!";
         this.novaSenha = "";
         this.confirmaSenha = "";
-        this.token = "";
+        
+        // Redirecionar para login após 3 segundos
+        setTimeout(() => {
+          this.$router.push("/login");
+        }, 3000);
+        
       } catch (err) {
         this.sucesso = false;
-        this.mensagem = err.response?.data?.erro || "Erro ao atualizar senha.";
+        const errorMsg = err.response?.data?.erro;
+        
+        if (errorMsg?.includes("token") || errorMsg?.includes("Token")) {
+          this.mensagem = "Token inválido ou expirado. Solicite uma nova recuperação de senha.";
+          this.token = ""; // Limpar token inválido
+        } else {
+          this.mensagem = errorMsg || "Erro ao atualizar senha.";
+        }
       } finally {
         this.carregando = false;
       }
@@ -113,84 +147,152 @@ export default {
 </script>
 
 <style scoped>
-/* Mantém o mesmo estilo do cadastro, apenas adaptando classes */
 .container-recuperar-senha {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
 }
+
 .cartao-recuperar {
-  background: #fff;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  max-width: 420px;
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   width: 100%;
+  max-width: 450px;
   text-align: center;
 }
+
+.logo-container {
+  margin-bottom: 20px;
+}
+
+.logo-sistema {
+  max-width: 120px;
+  height: auto;
+}
+
 .titulo-recuperar {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 24px;
 }
+
 .subtitulo-recuperar {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 1.5rem;
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.5;
 }
+
 .formulario-recuperar {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 20px;
 }
-.entrada-formulario {
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 100%;
+
+.grupo-duplo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
 }
-button {
-  background: #2a9d8f;
-  color: white;
-  border: none;
-  padding: 0.75rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-button:hover {
-  background: #21867a;
-}
-.mensagem-retorno {
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
+
+.grupo-formulario {
   text-align: left;
 }
+
+.rotulo-formulario {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 500;
+}
+
+.entrada-formulario {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.entrada-formulario:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.botao-principal {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.botao-principal:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.botao-principal:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.carregando-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mensagem-retorno {
+  padding: 12px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-weight: 500;
+}
+
 .mensagem-retorno.sucesso {
-  background: #e6ffed;
-  color: #2d7a46;
-  border: 1px solid #a6f0b6;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
 }
+
 .mensagem-retorno.erro {
-  background: #ffe6e6;
-  color: #a12b2b;
-  border: 1px solid #f0a6a6;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
+
 .link-voltar {
-  margin-top: 1rem;
   display: inline-block;
-  color: #2a9d8f;
+  margin-top: 20px;
+  color: #667eea;
   text-decoration: none;
+  font-weight: 500;
 }
+
 .link-voltar:hover {
   text-decoration: underline;
 }
-.logo-sistema {
-  width: 40%;
-  max-width: 150px;
-  height: auto;
-  margin-bottom: 1rem;
+
+/* Responsividade */
+@media (max-width: 480px) {
+  .cartao-recuperar {
+    padding: 30px 20px;
+  }
+  
+  .grupo-duplo {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
 }
 </style>

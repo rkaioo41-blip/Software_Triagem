@@ -21,17 +21,21 @@ class Api::RecuperarSenhasController < ApplicationController
     render json: { mensagem: "Instruções de redefinição de senha enviadas para seu e-mail." }
   end
 
+  def update
+    # CORREÇÃO: Acessar o password dentro do hash enfermeiro
+    nova_senha = params.dig(:enfermeiro, :password).to_s.strip
 
-    def update
-      nova_senha = params[:password].to_s.strip
-
-      if @enfermeiro.update(password: nova_senha, reset_password_token: nil, reset_password_sent_at: nil)
-        render json: { mensagem: "Senha atualizada com sucesso." }
-      else
-        render json: { erro: "Erro ao atualizar senha." }, status: :unprocessable_entity
-      end
+    if nova_senha.blank?
+      render json: { erro: "Senha não pode ficar em branco." }, status: :unprocessable_entity
+      return
     end
 
+    if @enfermeiro.update(password: nova_senha, reset_password_token: nil, reset_password_sent_at: nil)
+      render json: { mensagem: "Senha atualizada com sucesso." }
+    else
+      render json: { erro: @enfermeiro.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    end
+  end
 
   private
 

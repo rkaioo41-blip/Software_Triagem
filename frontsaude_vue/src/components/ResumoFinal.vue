@@ -107,7 +107,6 @@
         </p>
       </div>
 
-      <!-- Escala de Glasgow -->
       <div class="secao-relatorio glasgow">
         <h3>ESCALA DE GLASGOW</h3>
         <div class="glasgow-grid">

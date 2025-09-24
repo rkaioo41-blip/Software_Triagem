@@ -116,9 +116,6 @@ export default {
 </script>
 
 
-
-
-
 <style scoped>
 /* Variáveis de cores */
 :root {

@@ -5,7 +5,6 @@
       <p>Visualize e gerencie todas as triagens realizadas</p>
     </div>
 
-    <!-- Estatísticas -->
     <div class="estatisticas-container">
       <div class="estatistica-card">
         <div class="estatistica-icon azul">
@@ -47,7 +46,6 @@
       </div>
     </div>
 
-    <!-- Filtros -->
     <div class="filtros-container">
       <div class="filtros-header">
         <h3><i class="fas fa-filter"></i> Filtros</h3>
@@ -99,13 +97,11 @@
       </div>
     </div>
 
-    <!-- Loading -->
     <div v-if="carregando" class="loading-container">
       <i class="fas fa-spinner fa-spin"></i>
       <p>Carregando triagens...</p>
     </div>
 
-    <!-- Tabela de triagens -->
     <div v-else class="tabela-container">
       <div class="tabela-header">
         <h3>Triagens Realizadas</h3>
@@ -163,7 +159,6 @@
       </table>
     </div>
 
-    <!-- Paginação -->
     <div class="paginacao-container" v-if="totalPaginas > 1">
       <div class="paginacao-info">
         Mostrando {{ inicioItem }}-{{ fimItem }} de {{ totalTriagens }} itens
@@ -179,7 +174,6 @@
       </div>
     </div>
 
-    <!-- Modal de Visualização -->
     <div v-if="relatorioSelecionado" class="modal-overlay" @click="fecharModal">
       <div class="modal-conteudo" @click.stop>
         <div class="modal-cabecalho">
@@ -305,7 +299,7 @@ export default {
       this.carregando = true
       try {
         const response = await axios.get('http://localhost:3001/api/relatorios_triagem', {
-          params: { enfermeiro_id: this.usuarioLogado.id }, // 🔐 filtro direto
+          params: { enfermeiro_id: this.usuarioLogado.id },
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
         this.triagens = response.data
@@ -316,11 +310,10 @@ export default {
         this.carregando = false
       }
     },
-
     async carregarEstatisticas() {
       try {
         const response = await axios.get('http://localhost:3001/api/relatorios_triagem/estatisticas', {
-          params: { enfermeiro_id: this.usuarioLogado.id }, // 🔐 só estatísticas do logado
+          params: { enfermeiro_id: this.usuarioLogado.id }, 
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         })
         this.sintomasEstatisticas = response.data.sintomas || {}
@@ -328,7 +321,6 @@ export default {
         console.error('Erro ao carregar estatísticas:', error)
       }
     },
-
     buscarTriagens() { this.paginaAtual = 1 },
     limparFiltros() {
       this.filtroDataInicio = ''
@@ -345,7 +337,6 @@ export default {
     async gerenciarPDF(triagem, acao) {
       if (!triagem.pdf_disponivel) return
       try {
-        // Baixa o PDF como texto (base64 invertido)
         const response = await axios.get(
           `http://localhost:3001/api/relatorios_triagem/${triagem.id}/download`,
           {
@@ -354,10 +345,7 @@ export default {
           }
         )
         
-        // Reverte a inversão feita pelo backend
         const base64Revertido = response.data.split('').reverse().join('')
-        
-        // Converte base64 revertido para blob
         const binario = atob(base64Revertido)
         const array = new Uint8Array(binario.length)
         for (let i = 0; i < binario.length; i++) {
@@ -365,7 +353,6 @@ export default {
         }
         const finalBlob = new Blob([array], { type: 'application/pdf' })
 
-        // Cria URL para abrir ou baixar
         const url = window.URL.createObjectURL(finalBlob)
         if (acao === 'visualizar') {
           window.open(url, '_blank')
@@ -378,7 +365,6 @@ export default {
           document.body.removeChild(link)
         }
         
-        // Limpa a URL após um tempo
         setTimeout(() => window.URL.revokeObjectURL(url), 10000)
 
       } catch (error) {
@@ -435,7 +421,6 @@ export default {
   font-size: 16px;
 }
 
-/* Estatísticas */
 .estatisticas-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -469,17 +454,9 @@ export default {
   color: white;
 }
 
-.estatistica-icon.azul {
-  background: #3498db;
-}
-
-.estatistica-icon.vermelho {
-  background: #e74c3c;
-}
-
-.estatistica-icon.verde {
-  background: #2ecc71;
-}
+.estatistica-icon.azul { background: #3498db; }
+.estatistica-icon.vermelho { background: #e74c3c; }
+.estatistica-icon.verde { background: #2ecc71; }
 
 .estatistica-info h3 {
   margin: 0 0 5px 0;
@@ -539,7 +516,6 @@ export default {
   padding: 10px 0;
 }
 
-/* Filtros */
 .filtros-container {
   background: white;
   border-radius: 12px;
@@ -633,7 +609,6 @@ export default {
   background: #27ae60;
 }
 
-/* Loading */
 .loading-container {
   text-align: center;
   padding: 40px;
@@ -646,7 +621,6 @@ export default {
   color: #3498db;
 }
 
-/* Tabela */
 .tabela-container {
   background: white;
   border-radius: 12px;
@@ -791,7 +765,6 @@ export default {
   text-align: center;
 }
 
-/* Paginação */
 .paginacao-container {
   display: flex;
   justify-content: space-between;
@@ -842,7 +815,6 @@ export default {
   color: #2c3e50;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -962,7 +934,6 @@ export default {
   cursor: not-allowed;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .estatisticas-container {
     grid-template-columns: 1fr;
